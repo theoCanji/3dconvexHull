@@ -40,7 +40,6 @@ class RandomIncrementalHull3D:
         horizon = self.get_horizon(face, point)
         for edge in horizon:
             self.new_faces.append(self.hull.create_face([edge.start, edge.end, point]))
-            self.hull.plot()
         
         for pointi in self.needs_update:
             self.get_conflicts(pointi, self.new_faces)
@@ -70,21 +69,22 @@ class RandomIncrementalHull3D:
                 
                 if twin_face is None or not next_vis:  # It's a boundary edge or we can't see it
                     horizon_edges.add(edge)
-                    self.needs_update += self.conflict_faces[face]
+                    if face in self.conflict_faces:
+                        self.needs_update += self.conflict_faces[face]
                     to_remove.append(face)
                     
                 elif twin_face not in visited_faces and next_vis:
                     queue.append(twin_face)
                     visited_faces.add(twin_face)
-                    self.needs_update += self.conflict_faces[face]
+                    if face in self.conflict_faces:
+                        self.needs_update += self.conflict_faces[face]
                     to_remove.append(face)
             
         for face in to_remove:
             if face in self.conflict_faces:
                 del self.conflict_faces[face]
             self.hull.remove_face(face)
-        self.hull.plot()
 
         return list(horizon_edges)  # Return the set of horizon edges
     
-RandomIncrementalHull3D(helpers.generate_random_points(8))
+RandomIncrementalHull3D(helpers.generate_random_points(50))
