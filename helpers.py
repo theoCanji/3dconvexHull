@@ -23,6 +23,7 @@ class Vector:
     def __str__(self):
         return f"({self.x}, {self.y}, {self.z})"
 
+
 def determine_visibility(p1, p2, p3, q):
     v1 = Vector(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z)
     v2 = Vector(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z)

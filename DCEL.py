@@ -21,11 +21,15 @@ class DCEL:
 
         # Check if the edge already exists
         if key in self.edges:
-            return self.edges[key]  # Return existing edge
-
-        # Create new edges
-        edge = Edge(v1, v2)
-        twin = Edge(v2, v1)
+            edge = self.edges[key]  # Return existing edge
+        else: 
+            # Create new edges
+            edge = Edge(v1, v2)
+        
+        if twin_key in self.edges:
+            twin = self.edges[twin_key]
+        else:   
+            twin = Edge(v2, v1)
 
         edge.twin = twin
         twin.twin = edge
@@ -36,33 +40,45 @@ class DCEL:
 
         return edge
 
-    def create_face(self, points): # assume points are in ccw order
+    def create_face(self, points):
         if len(points) < 3:
             raise ValueError("A face must have at least 3 vertices.")
 
+        ## Ensure we work with our DCEL vertices
         vertices = [self.get_or_create_vertex(p) for p in points]
-
-        edges = []
+        new_edges = []
+        
         for i in range(len(vertices)):
-            v1, v2 = vertices[i], vertices[(i + 1) % len(vertices)]
-            edge = self.get_or_create_edge(v1, v2)
-            edges.append(edge)
+            v1 = vertices[i]
+            v2 = vertices[(i + 1) % len(vertices)]
+            
+            new_edge = Edge(v1, v2) ## make new edge
+            
+            twin_key = (v2.coordinates, v1.coordinates) ## check if there already is a twin, if not, make one
+            if twin_key in self.edges:
+                twin_edge = self.edges[twin_key]
+                new_edge.twin = twin_edge
+                twin_edge.twin = new_edge
+            else:
+                twin_edge = Edge(v2, v1)
+                new_edge.twin = twin_edge
+                twin_edge.twin = new_edge
+            
+            self.edges[(v1.coordinates, v2.coordinates)] = new_edge
+            self.edges[(v2.coordinates, v1.coordinates)] = twin_edge
+            new_edges.append(new_edge)
+        
+        for i, edge in enumerate(new_edges):
+            edge.next = new_edges[(i + 1) % len(new_edges)]
+            edge.prev = new_edges[i - 1]
 
-        # Create and assign face
-        face = Face(edges[0])  
-        for i in range(len(edges)):
-            edges[i].face = face
-            edges[i].next = edges[(i + 1) % len(edges)]
-            edges[i].prev = edges[i - 1]
+        face = Face(new_edges[0])
+        for edge in new_edges:
+            edge.face = face
 
         self.faces.add(face)
-
-        # Update twin edges if their face was previously None
-        for edge in edges:
-            if edge.twin.face is None:
-                edge.twin.face = face  # Assign adjacent face  
-                
         return face
+
                 
     def remove_face(self, face):
         edge = face.outer_edge
@@ -107,7 +123,11 @@ class DCEL:
         edges = []
         edge = face.outer_edge
         first_edge = edge
+        count = 0
         while True:
+            count += 1
+            if count == 6:
+                print("breakpoint")
             edges.append(edge)
             edge = edge.next
             if edge == first_edge:

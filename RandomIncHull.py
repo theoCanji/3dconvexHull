@@ -17,12 +17,20 @@ class RandomIncrementalHull3D:
         for point in self.points[4:]:
             self.get_conflicts(point, self.hull.faces)
         
+        count = 0
+        self.hull.plot()
         for point in self.points[4:]:
+            print("Getting point " + str(count))
+            count += 1
             self.add_point(point)
+            self.hull.plot()
             
         self.hull.plot()
         
     def get_conflicts(self, point, faces):
+        # print(self.conflict_faces.__sizeof__())
+        # print(self.conflict_vertices.__sizeof__())
+
         for face in faces:
             verts = self.hull.get_face_vertices(face)
             if helpers.determine_visibility(verts[0], verts[1], verts[2], point):
@@ -31,6 +39,7 @@ class RandomIncrementalHull3D:
                     self.conflict_faces[face].append(point)
                 else:
                     self.conflict_faces[face] = [point]
+                break
                     
     def add_point(self, point):
         if point not in self.conflict_vertices:
@@ -84,7 +93,8 @@ class RandomIncrementalHull3D:
             if face in self.conflict_faces:
                 del self.conflict_faces[face]
             self.hull.remove_face(face)
+        self.hull.plot()
 
         return list(horizon_edges)  # Return the set of horizon edges
     
-RandomIncrementalHull3D(helpers.generate_random_points(50))
+RandomIncrementalHull3D(helpers.generate_random_points(10))
