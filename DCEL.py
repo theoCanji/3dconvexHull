@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 class DCEL:
     def __init__(self):
         self.vertices = []  # List of vertices
-        self.edges = {}  # Hash table for edges (key: (start, end), value: Edge object)
+        self.edges = {}  # Hash table for edges (key: (start, end), value: Edge)
         self.faces = []  # List of faces
 
     def get_or_create_vertex(self, coordinates):
@@ -99,7 +99,6 @@ class DCEL:
                 if edge == first_edge:
                     break # cycle complete
                 
-            print(verts)
             ax.add_collection3d(Poly3DCollection([verts], edgecolor='k', alpha=.5)) 
 
         ## Set labels and aspect ratio
@@ -113,7 +112,7 @@ class DCEL:
     def test_dcel(self):
         dcel = DCEL()
 
-        # Define tetrahedron vertices
+        # Define tetrahedron vertices, the objects are made in create_tetrahedron
         p1 = (0, 0, 0)
         p2 = (1, 0, 0)
         p3 = (0, 1, 0)
@@ -122,7 +121,6 @@ class DCEL:
         # Construct the tetrahedron
         dcel.create_tetrahedron(p1, p2, p3, p4)
 
-        # Print DCEL structure
         print("\nVertices:")
         for vertex in dcel.vertices:
             print(vertex.coordinates)
@@ -141,8 +139,6 @@ class DCEL:
                 edge_cycle = edge_cycle.next
                 if edge_cycle == e:
                     break
-
-        # Plot the DCEL
         dcel.plot()
 
 class Edge: 
@@ -182,6 +178,6 @@ class Face:
     def __str__(self):
         return f'Face: {self.outer_edge})'
 
-# Run the test
-dcel = DCEL()
-dcel.test_dcel()
+# # Run the test
+# dcel = DCEL()
+# dcel.test_dcel()
