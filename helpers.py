@@ -10,28 +10,26 @@ class Vector:
         self.z = z
 
     def dot_product(self, v2):
-        return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z  
+        return self.x * v2.x + self.y * v2.y + self.z * v2.z  
 
     def cross_product(self, v2):
         return Vector(
-            v1.y * v2.z - v1.z * v2.y,
-            v1.z * v2.x - v1.x * v2.z,
-            v1.x * v2.y - v1.y * v2.x
+            self.y * v2.z - self.z * v2.y,
+            self.z * v2.x - self.x * v2.z,
+            self.x * v2.y - self.y * v2.x
         )
 
+
 def determine_visibility(p1, p2, p3, q):
-    # Compute vectors on the plane
     v1 = Vector(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z)
     v2 = Vector(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z)
     
-    normal_vector = Vector.cross_product(v1, v2)
-    #double check the normal vector is correct
-    query_vector = Vector(q.x-p1.x, q.y-p1.y, q.z-p1.z)
-    dot_product = Vector.dot_product(query_vector, normal_vector)
-    if dot_product > 0:
-        return True
-    else:
-        return False
+    normal_vector = v1.cross_product(v2)
+    query_vector = Vector(q.x - p1.x, q.y - p1.y, q.z - p1.z)
+    
+    dot_product = query_vector.dot_product(normal_vector)
+    
+    return dot_product > 0
 
 
 # Define the vertices of a polygon (half-plane)
@@ -49,7 +47,7 @@ ax = fig.add_subplot(111, projection='3d')
 
 
 #create vectors 
-q = Vector(2-x[0],8-y[0],-4-z[0]) # query point
+q = Vector(2, 8, -4)  #  absolute position of the point
 v1 = Vector(x[1]-x[0], y[1]-y[0], z[1]-z[0]) # vector from point 1 to point 2
 v2 = Vector(x[2]-x[0], y[2]-y[0], z[2]-z[0]) # vector from point 1 to point 3
 ax.scatter(q.x, q.y, q.z, color='b')
