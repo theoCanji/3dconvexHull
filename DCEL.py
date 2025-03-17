@@ -1,6 +1,9 @@
 import random
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+import numpy as np
+
+import helpers
 
 class DCEL:
     def __init__(self):
@@ -100,13 +103,21 @@ class DCEL:
                 break  # Loop through face complete
 
     def create_tetrahedron(self, p1, p2, p3, p4):
-        v1, v2, v3, v4 = p1, p2, p3, p4
-        self.vertices.extend([v1, v2, v3, v4])
+        # Add vertices to the hull.
+        self.vertices.extend([p1, p2, p3, p4])
+        
+        # Compute the centroid of the tetrahedron (strictly interior) to make sure evreything is oriented correctly
+        centroid = helpers.Vector(
+            (p1.x + p2.x + p3.x + p4.x) / 4.0,
+            (p1.y + p2.y + p3.y + p4.y) / 4.0,
+            (p1.z + p2.z + p3.z + p4.z) / 4.0
+        )
+        
+        self.create_face(helpers.oriented_face([p1, p2, p3], centroid))  # Base face
+        self.create_face(helpers.oriented_face([p1, p3, p4], centroid))  # Side face 1
+        self.create_face(helpers.oriented_face([p1, p4, p2], centroid))  # Side face 2
+        self.create_face(helpers.oriented_face([p2, p4, p3], centroid))  # Side face 3
 
-        self.create_face([p1, p2, p3])  # Base face
-        self.create_face([p1, p3, p4])  # Side face 1
-        self.create_face([p1, p4, p2])  # Side face 2
-        self.create_face([p2, p4, p3])  # Side face 3
         
     def get_face_vertices(self, face):
         verts = []
@@ -149,25 +160,32 @@ class DCEL:
             z_vals = [edge.start.coordinates[2], edge.end.coordinates[2]]
             ax.plot(x_vals, y_vals, z_vals, color='r')
 
-        ## Plot faces
         for face in self.faces:
-            verts = []
-            edge = face.outer_edge
-            first_edge = edge  ## find when we make a cycle, ie. the face is closed
-            while True:
-                verts.append(edge.start.coordinates)
-                edge = edge.next
-                if edge == first_edge:
-                    break # cycle complete
+            verts = self.get_face_vertices(face)
+
+            p1, p2, p3 = verts[0], verts[1], verts[2]
+            v1 = helpers.Vector(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z)
+            v2 = helpers.Vector(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z)
+            normal_vector = v1.cross_product(v2)
+            
+            for i in range(len(verts)):
+                verts[i] = verts[i].coordinates
                 
-            ax.add_collection3d(Poly3DCollection([verts], edgecolor='k', alpha=.5)) 
+            centroid_face = np.mean(verts, axis=0)
+
+            # Plot the normal vector 
+            ax.quiver(centroid_face[0], centroid_face[1], centroid_face[2],
+                    normal_vector.x, normal_vector.y, normal_vector.z,
+                    color='g', length=10, normalize=True)
+
+            ax.add_collection3d(Poly3DCollection([verts], edgecolor='k', alpha=.5))
 
         ## Set labels and aspect ratio
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
         ax.set_box_aspect([1, 1, 1])
-        
+
         plt.show()
     
     def __repr__(self): ## for degbugging

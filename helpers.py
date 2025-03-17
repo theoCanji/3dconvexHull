@@ -34,6 +34,28 @@ def determine_visibility(p1, p2, p3, q):
     dot_product = query_vector.dot_product(normal_vector)
     return dot_product > 0
 
+def oriented_face(points, centroid):
+    face_centroid = Vector(
+        (points[0].x + points[1].x + points[2].x) / 3.0,
+        (points[0].y + points[1].y + points[2].y) / 3.0,
+        (points[0].z + points[1].z + points[2].z) / 3.0
+    )
+    v1 = Vector(points[1].x - points[0].x,
+                points[1].y - points[0].y,
+                points[1].z - points[0].z)
+    v2 = Vector(points[2].x - points[0].x,
+                points[2].y - points[0].y,
+                points[2].z - points[0].z)
+    normal = v1.cross_product(v2)
+    # Compute a vector from the tetrahedron centroid to the face centroid.
+    direction = Vector(face_centroid.x - centroid.x,
+                    face_centroid.y - centroid.y,
+                    face_centroid.z - centroid.z)
+    # If the dot product is negative, the normal is pointing inward.
+    if normal.dot_product(direction) < 0:
+        points = [points[0], points[2], points[1]]
+    return points
+
 def generate_random_points(n):
     points = (np.random.rand(n, 3) * 100)//1
     return [(points[i][0], points[i][1], points[i][2]) for i in range(n)]
