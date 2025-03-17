@@ -145,7 +145,7 @@ class DCEL:
                 break
         return edges
 
-    def plot(self):
+    def plot(self, normal_mode = False):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
 
@@ -162,21 +162,25 @@ class DCEL:
 
         for face in self.faces:
             verts = self.get_face_vertices(face)
-
-            p1, p2, p3 = verts[0], verts[1], verts[2]
-            v1 = helpers.Vector(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z)
-            v2 = helpers.Vector(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z)
-            normal_vector = v1.cross_product(v2)
             
-            for i in range(len(verts)):
-                verts[i] = verts[i].coordinates
+            if normal_mode:
+                p1, p2, p3 = verts[0], verts[1], verts[2]
+                v1 = helpers.Vector(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z)
+                v2 = helpers.Vector(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z)
+                normal_vector = v1.cross_product(v2)
                 
-            centroid_face = np.mean(verts, axis=0)
+                for i in range(len(verts)):
+                    verts[i] = verts[i].coordinates
+                    
+                centroid_face = np.mean(verts, axis=0)
 
-            # Plot the normal vector 
-            ax.quiver(centroid_face[0], centroid_face[1], centroid_face[2],
-                    normal_vector.x, normal_vector.y, normal_vector.z,
-                    color='g', length=10, normalize=True)
+                # Plot the normal vector 
+                ax.quiver(centroid_face[0], centroid_face[1], centroid_face[2],
+                        normal_vector.x, normal_vector.y, normal_vector.z,
+                        color='g', length=10, normalize=True)
+            else:
+                for i in range(len(verts)):
+                    verts[i] = verts[i].coordinates
 
             ax.add_collection3d(Poly3DCollection([verts], edgecolor='k', alpha=.5))
 

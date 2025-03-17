@@ -23,7 +23,7 @@ class RandomIncrementalHull3D:
             print("Adding point " + str(count))
             count += 1
             self.add_point(point)
-            # self.hull.plot()
+            self.hull.plot()
 
         print(self.hull)   
         self.hull.plot()
@@ -46,6 +46,7 @@ class RandomIncrementalHull3D:
                     
     def add_point(self, point):
         if point not in self.conflict_vertices or self.conflict_vertices[point] is None:
+            print("skipping point")
             return ## point is not in conflict, so it is indside the hull
         
         face = self.conflict_vertices[point]
@@ -96,8 +97,8 @@ class RandomIncrementalHull3D:
             if face in self.conflict_faces:
                 del self.conflict_faces[face]
             self.hull.remove_face(face)
-        # self.hull.plot()
+        self.hull.plot()
 
         return list(horizon_edges)  # Return the set of horizon edges
     
-RandomIncrementalHull3D(helpers.generate_random_points(10))
+RandomIncrementalHull3D(helpers.generate_random_points(20))
