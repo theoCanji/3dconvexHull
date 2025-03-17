@@ -20,6 +20,8 @@ class Vector:
             self.x * v2.y - self.y * v2.x
         )
 
+    def __str__(self):
+        return f"({self.x}, {self.y}, {self.z})"
 
 def determine_visibility(p1, p2, p3, q):
     v1 = Vector(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z)
@@ -29,7 +31,6 @@ def determine_visibility(p1, p2, p3, q):
     query_vector = Vector(q.x - p1.x, q.y - p1.y, q.z - p1.z)
     
     dot_product = query_vector.dot_product(normal_vector)
-    
     return dot_product > 0
 
 def generate_random_points(n):

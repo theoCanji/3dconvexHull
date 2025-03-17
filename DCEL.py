@@ -6,13 +6,12 @@ class DCEL:
     def __init__(self):
         self.vertices = []  # List of vertices
         self.edges = {}  # Hash table for edges (key: (start, end), value: Edge)
-        self.faces = []  # List of faces
+        self.faces = set()  # set of faces
 
-    def get_or_create_vertex(self, coordinates):
+    def get_or_create_vertex(self, v):
         for vertex in self.vertices:
-            if vertex.coordinates == coordinates:
+            if vertex.coordinates == v.coordinates:
                 return vertex  # Return existing vertex
-        v = Vertex(coordinates)
         self.vertices.append(v)
         return v
 
@@ -56,23 +55,53 @@ class DCEL:
             edges[i].next = edges[(i + 1) % len(edges)]
             edges[i].prev = edges[i - 1]
 
-        self.faces.append(face)
+        self.faces.add(face)
 
         # Update twin edges if their face was previously None
         for edge in edges:
             if edge.twin.face is None:
-                edge.twin.face = face  # Assign adjacent face     
+                edge.twin.face = face  # Assign adjacent face  
+                
+        return face
+                
+    def remove_face(self, face):
+        edge = face.outer_edge
+        first_edge = edge
+        self.faces.discard(face)  # Remove face from set   
+        
+        while True:
+            twin_edge = edge.twin
+            if (edge.start.coordinates, edge.end.coordinates) in self.edges:
+                del self.edges[(edge.start.coordinates, edge.end.coordinates)]  # Remove edge from hash table
+            
+            # Check if the twin has a face, if not, remove it
+            if twin_edge.face is None:
+                del self.edges[(twin_edge.start.coordinates, twin_edge.end.coordinates)]
+                            
+            edge = edge.next
+            if edge == first_edge:
+                break  # Loop through face complete
 
     def create_tetrahedron(self, p1, p2, p3, p4):
-        v1, v2, v3, v4 = Vertex(p1), Vertex(p2), Vertex(p3), Vertex(p4)
+        v1, v2, v3, v4 = p1, p2, p3, p4
         self.vertices.extend([v1, v2, v3, v4])
 
         self.create_face([p1, p2, p3])  # Base face
         self.create_face([p1, p3, p4])  # Side face 1
         self.create_face([p1, p4, p2])  # Side face 2
         self.create_face([p2, p4, p3])  # Side face 3
-
         
+    def get_face_vertices(self, face):
+        verts = []
+        edge = face.outer_edge
+        first_edge = edge
+        while True:
+            verts.append(edge.start)
+            edge = edge.next
+            if edge == first_edge:
+                break
+        return verts
+
     def plot(self):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -108,38 +137,6 @@ class DCEL:
         ax.set_box_aspect([1, 1, 1])
         
         plt.show()
-        
-    def test_dcel(self):
-        dcel = DCEL()
-
-        # Define tetrahedron vertices, the objects are made in create_tetrahedron
-        p1 = (0, 0, 0)
-        p2 = (1, 0, 0)
-        p3 = (0, 1, 0)
-        p4 = (0, 0, 1)
-
-        # Construct the tetrahedron
-        dcel.create_tetrahedron(p1, p2, p3, p4)
-
-        print("\nVertices:")
-        for vertex in dcel.vertices:
-            print(vertex.coordinates)
-
-        print("\nEdges:")
-        for edge in dcel.edges.values():
-            print(f"Edge from {edge.start.coordinates} to {edge.end.coordinates}")
-
-        print("\nFaces:")
-        for face in self.faces:
-            e = face.outer_edge
-            print(f"Face with edges:")
-            edge_cycle = e
-            while True:
-                print(f"  {edge_cycle.start.coordinates} -> {edge_cycle.end.coordinates}")
-                edge_cycle = edge_cycle.next
-                if edge_cycle == e:
-                    break
-        dcel.plot()
 
 class Edge: 
     def __init__(self, start, end, face = None, twin = None , next = None, prev = None):
@@ -160,6 +157,7 @@ class Edge:
 class Vertex:
     def __init__(self, coordinates):
         self.coordinates = coordinates
+        self.x, self.y, self.z = coordinates
         self.edge = None
         
     def __repr__(self): ## for degbugging
@@ -177,7 +175,3 @@ class Face:
     
     def __str__(self):
         return f'Face: {self.outer_edge})'
-
-# # Run the test
-# dcel = DCEL()
-# dcel.test_dcel()
