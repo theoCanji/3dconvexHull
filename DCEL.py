@@ -72,11 +72,12 @@ class DCEL:
         while True:
             twin_edge = edge.twin
             if (edge.start.coordinates, edge.end.coordinates) in self.edges:
-                del self.edges[(edge.start.coordinates, edge.end.coordinates)]  # Remove edge from hash table
+                self.edges[(edge.start.coordinates, edge.end.coordinates)].face = None  # Remove edge from hash table
             
-            # Check if the twin has a face, if not, remove it
-            if twin_edge.face is None:
-                del self.edges[(twin_edge.start.coordinates, twin_edge.end.coordinates)]
+                # Check if the twin has a face, if not, remove it
+                if twin_edge.face is None:
+                    del self.edges[(edge.end.coordinates, edge.start.coordinates)]
+                    del self.edges[(edge.start.coordinates, edge.end.coordinates)]
                             
             edge = edge.next
             if edge == first_edge:
@@ -101,6 +102,17 @@ class DCEL:
             if edge == first_edge:
                 break
         return verts
+
+    def get_face_edges(self, face):
+        edges = []
+        edge = face.outer_edge
+        first_edge = edge
+        while True:
+            edges.append(edge)
+            edge = edge.next
+            if edge == first_edge:
+                break
+        return edges
 
     def plot(self):
         fig = plt.figure()

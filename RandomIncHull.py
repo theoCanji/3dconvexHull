@@ -40,6 +40,7 @@ class RandomIncrementalHull3D:
         horizon = self.get_horizon(face, point)
         for edge in horizon:
             self.new_faces.append(self.hull.create_face([edge.start, edge.end, point]))
+            self.hull.plot()
         
         for pointi in self.needs_update:
             self.get_conflicts(pointi, self.new_faces)
@@ -58,13 +59,16 @@ class RandomIncrementalHull3D:
         visited_faces.add(face)
         while queue:
             face = queue.popleft()
-            edge = face.outer_edge
-
-            for _ in range(3):
+            edges = self.hull.get_face_edges(face)
+            for edge in edges:
                 twin_face = edge.twin.face
-                p1,p2,p3 = self.hull.get_face_vertices(twin_face)
-                next_vis = helpers.determine_visibility(p1,p2,p3, point)
-                if twin_face is None or not next_vis:  # It's a boundary edge
+                if twin_face is not None:
+                    p1,p2,p3 = self.hull.get_face_vertices(twin_face)
+                    next_vis = helpers.determine_visibility(p1,p2,p3, point)
+                else:
+                    next_vis = False
+                
+                if twin_face is None or not next_vis:  # It's a boundary edge or we can't see it
                     horizon_edges.add(edge)
                     self.needs_update += self.conflict_faces[face]
                     to_remove.append(face)
@@ -74,12 +78,13 @@ class RandomIncrementalHull3D:
                     visited_faces.add(twin_face)
                     self.needs_update += self.conflict_faces[face]
                     to_remove.append(face)
-                    
-                edge = edge.next  # Move to the next edge in the face
             
         for face in to_remove:
+            if face in self.conflict_faces:
+                del self.conflict_faces[face]
             self.hull.remove_face(face)
+        self.hull.plot()
 
         return list(horizon_edges)  # Return the set of horizon edges
     
-RandomIncrementalHull3D(helpers.generate_random_points(5))
+RandomIncrementalHull3D(helpers.generate_random_points(8))
