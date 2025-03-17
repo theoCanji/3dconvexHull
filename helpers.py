@@ -35,7 +35,7 @@ def determine_visibility(p1, p2, p3, q):
     return dot_product > 0
 
 def generate_random_points(n):
-    points = np.random.rand(n, 3)
+    points = (np.random.rand(n, 3) * 100)//1
     return [(points[i][0], points[i][1], points[i][2]) for i in range(n)]
 
 def main():

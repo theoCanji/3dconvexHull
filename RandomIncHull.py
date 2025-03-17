@@ -20,11 +20,12 @@ class RandomIncrementalHull3D:
         count = 0
         # self.hull.plot()
         for point in self.points[4:]:
-            print("Getting point " + str(count))
+            print("Adding point " + str(count))
             count += 1
             self.add_point(point)
             # self.hull.plot()
-            
+
+        print(self.hull)   
         self.hull.plot()
 
     def get_conflicts(self, point, faces):

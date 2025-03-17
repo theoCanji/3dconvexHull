@@ -169,6 +169,16 @@ class DCEL:
         ax.set_box_aspect([1, 1, 1])
         
         plt.show()
+    
+    def __repr__(self): ## for degbugging
+        ret = f'DCEL: {len(self.vertices)} vertices, {len(self.edges)} edges, {len(self.faces)} faces'
+        ret += '\nVertices:\n' + ',\n'.join([f"{v.coordinates}" for v in self.vertices])
+        ret += '\nEdges:\n' + ',\n'.join([f"{str(e.start.coordinates)}->{str(e.end.coordinates)}" for e in self.edges.values()])
+        ret += '\nFaces: ' + ', '.join([str(f) for f in self.faces])
+        return ret
+
+    def __str__(self):
+        return self.__repr__()
 
 class Edge: 
     def __init__(self, start, end, face = None, twin = None , next = None, prev = None):
