@@ -20,8 +20,8 @@ def time_algorithm(n_values, i):
   
     return avg_time, iterations
 
-n_values = [50, 100, 150, 200, 250, 300]
+n_values = [100, 200, 400, 800, 1600]
 results = []
 
-time_algorithm(n_values, 1000)
+time_algorithm(n_values, 250)
 
