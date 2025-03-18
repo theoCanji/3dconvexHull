@@ -19,7 +19,8 @@ class RandomIncrementalHull3D:
         for point in self.points[4:]: # O(nlgn)
             self.add_point(point)
 
-        # self.hull.plot()
+        # self.hull.plot() # visualize the hull
+        
         # print(helpers.is_convex(self.hull)) #used to ensure correct result
 
     def get_conflicts(self, points, faces):
@@ -103,4 +104,4 @@ class RandomIncrementalHull3D:
             self.hull.remove_face(face)
         return list(horizon_edges)
 
-RandomIncrementalHull3D(helpers.generate_random_points(300))
+RandomIncrementalHull3D(helpers.generate_random_points(71))
