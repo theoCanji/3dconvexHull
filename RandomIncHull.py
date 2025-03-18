@@ -14,27 +14,29 @@ class RandomIncrementalHull3D:
         self.needs_update = []
         self.new_faces = []
 
-        for point in self.points[4:]:
-            self.get_conflicts(point, self.hull.faces)
+        self.get_conflicts(self.points[4:], self.hull.faces)
         
-        for point in self.points[4:]:
+        for point in self.points[4:]: # O(nlgn)
             self.add_point(point)
 
-        self.hull.plot()
+        # self.hull.plot()
 
-    def get_conflicts(self, point, faces):
-        conflict_found = False
+    def get_conflicts(self, points, faces):
+        points = set(points)
         for face in faces:
             verts = self.hull.get_face_vertices(face)
-            if helpers.determine_visibility(verts[0], verts[1], verts[2], point):
-                self.conflict_vertices[point] = face
-                if face in self.conflict_faces:
-                    self.conflict_faces[face].append(point)
-                else:
-                    self.conflict_faces[face] = [point]
-                conflict_found = True
-                break
-        if not conflict_found:
+            points_to_remove = []
+            for point in points:
+                if helpers.determine_visibility(verts[0], verts[1], verts[2], point):
+                    self.conflict_vertices[point] = face
+                    if face in self.conflict_faces:
+                        self.conflict_faces[face].append(point)
+                    else:
+                        self.conflict_faces[face] = [point]
+                    points_to_remove.append(point)
+            for point in points_to_remove:
+                points.remove(point)
+        for point in points:
             self.conflict_vertices[point] = None
 
                     
@@ -47,8 +49,8 @@ class RandomIncrementalHull3D:
         for edge in horizon:
             self.new_faces.append(self.hull.create_face([edge.start, edge.end, point]))
         
-        for pointi in self.needs_update:
-            self.get_conflicts(pointi, self.new_faces)
+
+        self.get_conflicts(self.needs_update, self.new_faces)
             
         self.needs_update = []
         self.new_faces = []
@@ -99,4 +101,4 @@ class RandomIncrementalHull3D:
             self.hull.remove_face(face)
         return list(horizon_edges)
 
-RandomIncrementalHull3D(helpers.generate_random_points(37))
+RandomIncrementalHull3D(helpers.generate_random_points(300))
