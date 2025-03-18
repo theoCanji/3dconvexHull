@@ -23,43 +23,52 @@ class Vector:
     def __str__(self):
         return f"({self.x}, {self.y}, {self.z})"
 
-
 def determine_visibility(p1, p2, p3, q):
-    v1 = Vector(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z)
-    v2 = Vector(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z)
+    v1 = Vector(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z) ## vector from p1 to p2
+    v2 = Vector(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z) ## vector from p1 to p3
     
-    normal_vector = v1.cross_product(v2)
+    normal_vector = v1.cross_product(v2) ## normal vector to the plane
     query_vector = Vector(q.x - p1.x, q.y - p1.y, q.z - p1.z)
     
-    dot_product = query_vector.dot_product(normal_vector)
-    return dot_product > 0
+    dot_product = query_vector.dot_product(normal_vector) 
+    return dot_product > 0 ## if the dot product is positive, the point is visible
 
-def oriented_face(points, centroid):
-    face_centroid = Vector(
-        (points[0].x + points[1].x + points[2].x) / 3.0,
-        (points[0].y + points[1].y + points[2].y) / 3.0,
-        (points[0].z + points[1].z + points[2].z) / 3.0
-    )
-    v1 = Vector(points[1].x - points[0].x,
-                points[1].y - points[0].y,
-                points[1].z - points[0].z)
-    v2 = Vector(points[2].x - points[0].x,
-                points[2].y - points[0].y,
-                points[2].z - points[0].z)
+def oriented_face(points, centroid): 
+    ## used to ensure that our initial tetrhedron is oriented correctly
+    face_centroid = Vector((points[0].x + points[1].x + points[2].x) / 3.0, (points[0].y + points[1].y + points[2].y) / 3.0, (points[0].z + points[1].z + points[2].z) / 3.0) 
+    
+    v1 = Vector(points[1].x - points[0].x, points[1].y - points[0].y, points[1].z - points[0].z)
+    v2 = Vector(points[2].x - points[0].x, points[2].y - points[0].y, points[2].z - points[0].z)
+    
     normal = v1.cross_product(v2)
-    # Compute a vector from the tetrahedron centroid to the face centroid.
-    direction = Vector(face_centroid.x - centroid.x,
-                    face_centroid.y - centroid.y,
-                    face_centroid.z - centroid.z)
-    # If the dot product is negative, the normal is pointing inward.
+    
+    # make a vector from the tetrahedron centroid to the face centroid
+    direction = Vector(face_centroid.x - centroid.x, face_centroid.y - centroid.y, face_centroid.z - centroid.z)
+    
+    # If the dot product is negative, the normal is pointing inward, so flip it
     if normal.dot_product(direction) < 0:
         points = [points[0], points[2], points[1]]
     return points
 
 def generate_random_points(n):
+    ## helper to test the algorithm
     points = (np.random.rand(n, 3) * 100)//1
     return [(points[i][0], points[i][1], points[i][2]) for i in range(n)]
 
+def is_convex(dcel):
+    for face in dcel.faces:
+        face_vertices = dcel.get_face_vertices(face)
+        if len(face_vertices) < 3:
+            return False  
+        p1, p2, p3 = face_vertices[:3]
+        for vertex in dcel.vertices:
+            if vertex in face_vertices:
+                continue  
+            if determine_visibility(p1, p2, p3, vertex): ## if a interior point is visible, the face is not convex
+                return False
+    return True 
+
+##old code to test normals
 def main():
     # Define the vertices of a polygon (half-plane)
     # These are the vertices in 2D

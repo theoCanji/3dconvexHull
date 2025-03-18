@@ -7,15 +7,14 @@ import helpers
 
 class DCEL:
     def __init__(self):
-        self.vertices = []  # List of vertices
+        self.vertices = set()  # List of vertices
         self.edges = {}  # Hash table for edges (key: (start, end), value: Edge)
         self.faces = set()  # set of faces
 
     def get_or_create_vertex(self, v):
-        for vertex in self.vertices:
-            if vertex.coordinates == v.coordinates:
-                return vertex  # Return existing vertex
-        self.vertices.append(v)
+        if v in self.vertices:
+            return v
+        self.vertices.add(v)
         return v
 
     def get_or_create_edge(self, v1, v2):
@@ -104,7 +103,7 @@ class DCEL:
 
     def create_tetrahedron(self, p1, p2, p3, p4):
         # Add vertices to the hull.
-        self.vertices.extend([p1, p2, p3, p4])
+        self.vertices.union([p1, p2, p3, p4])
         
         # Compute the centroid of the tetrahedron (strictly interior) to make sure evreything is oriented correctly
         centroid = helpers.Vector(

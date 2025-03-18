@@ -20,6 +20,7 @@ class RandomIncrementalHull3D:
             self.add_point(point)
 
         # self.hull.plot()
+        # print(helpers.is_convex(self.hull)) #used to ensure correct result
 
     def get_conflicts(self, points, faces):
         points = set(points)
@@ -42,6 +43,7 @@ class RandomIncrementalHull3D:
                     
     def add_point(self, point):
         if point not in self.conflict_vertices or self.conflict_vertices[point] is None:
+            self.hull.get_or_create_vertex(point)
             return ## point is not in conflict, so it is indside the hull
         
         face = self.conflict_vertices[point]
