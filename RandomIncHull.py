@@ -13,7 +13,7 @@ class RandomIncrementalHull3D:
         """
         self.points = list(map(lambda x: Vertex(x), points))
         self.hull = DCEL()
-        random.shuffle(points)
+        random.shuffle(points) ## randomized insertion order
         self.conflict_faces = {} ## face: [vertices that use it as a conflict face]
         self.conflict_vertices = {} ## vertex: [face]
         self.hull.create_tetrahedron(self.points[0], self.points[1], self.points[2], self.points[3])
@@ -22,7 +22,7 @@ class RandomIncrementalHull3D:
 
         self.get_conflicts(self.points[4:], self.hull.faces)
         
-        for point in self.points[4:]: # O(nlgn)
+        for point in self.points[4:]: 
             self.add_point(point)
             
     def get_hull(self):
