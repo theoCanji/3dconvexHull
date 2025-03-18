@@ -7,42 +7,43 @@ import helpers
 
 class DCEL:
     def __init__(self):
+        """
+        Initializes the DCEL object, stores, our vertices, edges, and faces
+        """
         self.vertices = set()  # List of vertices
         self.edges = {}  # Hash table for edges (key: (start, end), value: Edge)
         self.faces = set()  # set of faces
 
     def get_or_create_vertex(self, v):
+        """
+        Function to get or create a vertex in the DCEL, if one already exists
+
+        Args:
+            v (Vertex): The vertex to try and find
+
+        Returns:
+            Vertex: The Vertex, either new or already in DCEL
+        """
         if v in self.vertices:
             return v
         self.vertices.add(v)
         return v
 
-    def get_or_create_edge(self, v1, v2):
-        key = (v1.coordinates, v2.coordinates)
-        twin_key = (v2.coordinates, v1.coordinates)
-
-        # Check if the edge already exists
-        if key in self.edges:
-            edge = self.edges[key]  # Return existing edge
-        else: 
-            # Create new edges
-            edge = Edge(v1, v2)
-        
-        if twin_key in self.edges:
-            twin = self.edges[twin_key]
-        else:   
-            twin = Edge(v2, v1)
-
-        edge.twin = twin
-        twin.twin = edge
-
-        # Store edges in hash table
-        self.edges[key] = edge
-        self.edges[twin_key] = twin
-
-        return edge
-
     def create_face(self, points):
+        """
+        Make a new face from a list of points (vertices).
+        Creates new half edges for this face, and uses twins if they already exist
+        if not, make them.
+
+        Args:
+            points (list[Vertex]): the ordered list of vertices that make up the face
+
+        Raises:
+            ValueError: not enough points to make a face
+
+        Returns:
+            Face: A new face in the DCEL
+        """
         if len(points) < 3:
             raise ValueError("A face must have at least 3 vertices.")
 
@@ -83,6 +84,12 @@ class DCEL:
 
                 
     def remove_face(self, face):
+        """
+        Remove a face from the DCEL, and remove the edges that belong to the face, if the twin is None, remove bothe edges, if not, set its half edge to None.
+
+        Args:
+            face Face: the face to remove
+        """
         edge = face.outer_edge
         first_edge = edge
         self.faces.discard(face)  # Remove face from set   

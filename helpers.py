@@ -69,7 +69,7 @@ def is_convex(dcel):
     return True 
 
 ##old code to test normals
-def main():
+def normal_test():
     # Define the vertices of a polygon (half-plane)
     # These are the vertices in 2D
     x = np.array([1, 4, 4, 1])
