@@ -18,13 +18,10 @@ class RandomIncrementalHull3D:
             self.get_conflicts(point, self.hull.faces)
         
         count = 0
-        # self.hull.plot()
         for point in self.points[4:]:
             count += 1
             self.add_point(point)
-            # self.hull.plot()
 
-        print(self.hull)   
         self.hull.plot()
 
     def get_conflicts(self, point, faces):
@@ -102,7 +99,6 @@ class RandomIncrementalHull3D:
             if face in self.conflict_faces:
                 del self.conflict_faces[face]
             self.hull.remove_face(face)
-        # self.hull.plot()
         return list(horizon_edges)
 
 RandomIncrementalHull3D(helpers.generate_random_points(100))

@@ -134,11 +134,7 @@ class DCEL:
         edges = []
         edge = face.outer_edge
         first_edge = edge
-        count = 0
         while True:
-            count += 1
-            if count == 6:
-                print("breakpoint")
             edges.append(edge)
             edge = edge.next
             if edge == first_edge:
