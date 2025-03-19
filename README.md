@@ -156,13 +156,13 @@ The class for running the random incremental convex hull algorithm.
 
 **How to Run**
 
-To run the code, simply go to `main.py` and run the file. It will run the runtime tests to show we acheived the expected runtime and show the results in the console and plot a runtime graph. 
+To run the code, simply go to `main.py`. Look at the main function and choose what functions you want to run, `visualize_hull(n)` or `time_algorithm(n_values, i, decrement_i=True)`.
 
-After you close the graph, it will show a plot of the convex hull in 3D in matplotlib. After closing that plot, it will output to console the correctness of the convex hull and the runtime of the algorithm with a boolean indicating if the hull is truly convex.
+Uncommenting `time_algorithm(n_values, i, decrement_i=True)` will run the runtime tests to show we acheived the expected runtime and show the results in the console and plot a runtime graph. 
 
-You can comment out the `time_algorithm()` function to only run the correctness tests and plot the hull in 3D. You can also change the value of `n` to show the output for a different number of points (the visualizer will start lagging with too many point).
+After you close the graph, if `visualize_hull(n)` is uncommented, it will show a plot of the convex hull in 3D in matplotlib. After closing that plot, it will output to console the correctness of the convex hull and the runtime of the algorithm with a boolean indicating if the hull is truly convex. You can change the value of `n` defined in the main function to test different numbers of points.
 
-To create your own instance of the hull, simply import `from RandomIncHull import RandomIncrementalHull3D` and create a new `RandomIncrementalHull3D` with a set of points, that object will now be plottable as it will hold the DCEL for the hull on instantiation.
+To create your own instance of the hull, simply import `from RandomIncHull import RandomIncrementalHull3D` and create a new `RandomIncrementalHull3D` with a set of three dimensional points, that object will now be plottable as it will hold the DCEL for the hull on instantiation.
 
 
 

@@ -59,7 +59,7 @@ def main():
     n_values = [16000, 24000, 32000, 48000, 64000, 96000, 128000, 192000, 256000]
     n = 100
     
-    time_algorithm(n_values, 100)
+    # time_algorithm(n_values, 10)
     visualize_hull(n)
     
     

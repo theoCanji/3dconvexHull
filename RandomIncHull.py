@@ -148,5 +148,3 @@ class RandomIncrementalHull3D:
                 del self.conflict_faces[face]
             self.hull.remove_face(face)
         return list(horizon_edges)
-
-RandomIncrementalHull3D(helpers.generate_random_points(100))
