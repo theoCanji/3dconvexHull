@@ -56,9 +56,10 @@ def main():
     """
     main function to demonstrate runtime and the algo for a smaller n
     """
-    n_values = [16000, 24000, 32000, 48000, 64000, 96000, 128000, 192000, 256000, 384000, 512000, 768000, 1024000]
+    n_values = [16000, 24000, 32000, 48000, 64000, 96000, 128000, 192000, 256000]
     n = 100
-    time_algorithm(n_values, 100, False)
+    
+    time_algorithm(n_values, 100)
     visualize_hull(n)
     
     

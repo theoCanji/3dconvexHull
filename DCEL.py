@@ -109,6 +109,15 @@ class DCEL:
                 break  # Loop through face complete
 
     def create_tetrahedron(self, p1, p2, p3, p4):
+        """
+        Build the initial tetrahedron in the DCEL to use as a basis for the algorithm
+
+        Args:
+            p1 (Vertex): A point to use to create the initial tetrahedron
+            p2 (Vertex): A point to use to create the initial tetrahedron
+            p3 (Vertex): A point to use to create the initial tetrahedron
+            p4 (Vertex): A point to use to create the initial tetrahedron
+        """
         # Add vertices to the hull.
         self.vertices.union([p1, p2, p3, p4])
         
@@ -126,6 +135,15 @@ class DCEL:
 
         
     def get_face_vertices(self, face):
+        """
+        Helper method to get the vertices for a given face
+
+        Args:
+            face (Face): The face to get vertices for
+
+        Returns:
+            list[Vertex]: the ordered list of vertices from the face
+        """
         verts = []
         edge = face.outer_edge
         first_edge = edge
@@ -137,6 +155,15 @@ class DCEL:
         return verts
 
     def get_face_edges(self, face):
+        """
+        Helper method to get the edges defining a face.
+
+        Args:
+            face (Face): The face to get edges for
+
+        Returns:
+            list[Edge]: the ordered list of edges from the face
+        """
         edges = []
         edge = face.outer_edge
         first_edge = edge
@@ -148,6 +175,12 @@ class DCEL:
         return edges
 
     def plot(self, normal_mode = False):
+        """
+        method to plot the DCEL in matplotlib
+
+        Args:
+            normal_mode (bool, optional): A boolean flag of whether or not to show the normals of the faces. Defaults to False.
+        """
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
 
@@ -205,7 +238,21 @@ class DCEL:
         return self.__repr__()
 
 class Edge: 
+    """
+    Edge class to be held in the DCEL
+    """
     def __init__(self, start, end, face = None, twin = None , next = None, prev = None):
+        """
+        Initialize availible variables
+
+        Args:
+            start (Vertex): _description_
+            end (Vertex): _description_
+            face (Face, optional): The incident face. Defaults to None.
+            twin (Edge, optional): the twin of the half edge. Defaults to None.
+            next (Edge, optional): the next edge inident on the same face. Defaults to None.
+            prev (Edge, optional): the previous edge incident on the same face. Defaults to None.
+        """
         self.id = random.randint(0, 1000) # Unique identifier
         self.start = start
         self.end = end
@@ -221,7 +268,15 @@ class Edge:
         return f'Edge: ({self.start}, {self.end})'
 
 class Vertex:
+    """
+    Vertex class to be held in the DCEL
+    """
     def __init__(self, coordinates):
+        """
+        Initialize Vertex to hold a reference to an edge incident on it.
+        Args:
+            coordinates (Vertex): the position of the vertex
+        """
         self.coordinates = coordinates
         self.x, self.y, self.z = coordinates
         self.edge = None
@@ -233,7 +288,16 @@ class Vertex:
         return f'Vertex: ({self.coordinates})'
 
 class Face:
+    """
+    Face class to be held in the DCEL
+    """
     def __init__(self, edge):
+        """
+        Initialize the face to hold a edge incident on the face, any edge that refers to this face as its face
+
+        Args:
+            edge (Edge): the edge that is indicent on the face
+        """
         self.outer_edge = edge
         
     def __repr__(self): ## for degbugging
