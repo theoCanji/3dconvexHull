@@ -52,7 +52,7 @@ def oriented_face(points, centroid):
 
 def generate_random_points(n):
     ## helper to test the algorithm
-    points = (np.random.rand(n, 3) * 100)//1
+    points = (np.random.rand(n, 3) * 100)
     return [(points[i][0], points[i][1], points[i][2]) for i in range(n)]
 
 def is_convex(dcel):

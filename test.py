@@ -4,7 +4,7 @@ from RandomIncHull import RandomIncrementalHull3D
 import helpers
 import matplotlib.pyplot as plt
 
-def time_algorithm(n_values, i):
+def time_algorithm(n_values, i, decrement_i = True):
     """
     Times the algorithm for different values of n, ensuring that the total time is > 1 second for accurate timing
 
@@ -23,8 +23,8 @@ def time_algorithm(n_values, i):
             elapsed = time.time() - start
             total_time += elapsed
         avg_time = total_time / iterations
-        results.append(avg_time/n)
-        if total_time > 2 and iterations >= 10:
+        results.append(avg_time)
+        if decrement_i and total_time > 2 and iterations >= 10:
             iterations = iterations//2
         print(f"n = {n:5d} | Average Time = {avg_time:.4f} sec over {iterations:2d} iterations | Total Time = {total_time:.4f} sec")
         total_time = 0
@@ -33,9 +33,10 @@ def time_algorithm(n_values, i):
     plt.figure(figsize=(10, 6))
     plt.plot(n_values, results, marker='o', linestyle='-', color='b')
     plt.xlabel('Number of Points (n)')
-    plt.ylabel('Average Time (seconds)')
-    plt.title('Runtime of RandomIncrementalHull3D')
+    plt.ylabel('Average Time (seconds) Over 100 Iterations')
+    plt.title('Runtime of Randomized Incremental Convex Hull in 3D')
     plt.grid(True)
+    plt.savefig('runtime.png')
     plt.show()
 
 def visualize_hull(n: int):
@@ -55,10 +56,9 @@ def main():
     """
     main function to demonstrate runtime and the algo for a smaller n
     """
-    
-    n_values = [500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000, 512000]
+    n_values = [16000, 24000, 32000, 48000, 64000, 96000, 128000, 192000, 256000, 384000, 512000, 768000, 1024000]
     n = 100
-    time_algorithm(n_values, 75)
+    time_algorithm(n_values, 100, False)
     visualize_hull(n)
     
     
