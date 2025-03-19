@@ -1,0 +1,13 @@
+n = 16000 | Average Time = 0.4745 sec over 100 iterations | Total Time = 47.4454 sec
+n = 24000 | Average Time = 0.6937 sec over 100 iterations | Total Time = 69.3704 sec
+n = 32000 | Average Time = 0.8913 sec over 100 iterations | Total Time = 89.1346 sec
+n = 48000 | Average Time = 1.3309 sec over 100 iterations | Total Time = 133.0941 sec
+n = 64000 | Average Time = 1.7758 sec over 100 iterations | Total Time = 177.5829 sec
+n = 96000 | Average Time = 2.7126 sec over 100 iterations | Total Time = 271.2618 sec
+n = 128000 | Average Time = 3.5729 sec over 100 iterations | Total Time = 357.2854 sec
+n = 192000 | Average Time = 5.4132 sec over 100 iterations | Total Time = 541.3230 sec
+n = 256000 | Average Time = 7.2753 sec over 100 iterations | Total Time = 727.5347 sec
+n = 384000 | Average Time = 11.2821 sec over 100 iterations | Total Time = 1128.2096 sec
+n = 512000 | Average Time = 15.2175 sec over 100 iterations | Total Time = 1521.7508 sec
+n = 768000 | Average Time = 23.2074 sec over 100 iterations | Total Time = 2320.7440 sec
+n = 1024000 | Average Time = 31.6653 sec over 100 iterations | Total Time = 3166.5305 sec
