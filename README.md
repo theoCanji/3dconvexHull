@@ -25,6 +25,10 @@
 
 `runtime.txt` is the data associated with `runtime.png`
 
+`sample_output.png` is a sample output of the convex hull for 100 points.
+
+`sample_input.png` is a sample input of 100 randomly generated points.
+
 ## Functions and Classes in `DCEL.py`
 The main class for our Doubly Connected Edge List.
 
