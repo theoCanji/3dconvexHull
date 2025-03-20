@@ -61,7 +61,7 @@ def main():
     close the window over and over to go step by step
     """
     n_values = [16000, 24000, 32000, 48000, 64000, 96000, 128000, 192000, 256000]
-    display_incremental = True ## change this to True to see the incremental hull being built
+    display_incremental = False ## change this to True to see the incremental hull being built
     n = 100
     
     # time_algorithm(n_values, 10)
