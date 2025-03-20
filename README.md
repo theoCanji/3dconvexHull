@@ -108,6 +108,10 @@ The class for running the random incremental convex hull algorithm.
 - **`__init__(points)`**  
   Initializes the Random Incremental Hull object and creates the hull.  
 
+  Args:
+  - `points`: List of 3D points to create the hull from.
+  - `dis_inc`: Flag to determine if the hull is to be displayed incrementally. Defaults to False.
+
 - **`get_hull()`**  
   Retrieves the DCEL hull from the object.  
 
@@ -150,8 +154,9 @@ The class for running the random incremental convex hull algorithm.
   - Prints runtime results  
   - Generates and saves a plot (`runtime.png`) showing the runtime of the algorithm  
 
-- **`visualize_hull(n)`**  
+- **`visualize_hull(n, dis_inc: Optional[bool])`**  
   Generates and visualizes the convex hull for a given number of points.
+  If `dis_inc` is `True`, the hull will be displayed incrementally. Closing the matplotlib window will continue the algorithm on the next step.
 
 - **`main()`**  
   Main function to show runtime, hull visualization, and correctness.  
@@ -160,7 +165,7 @@ The class for running the random incremental convex hull algorithm.
 
 **How to Run**
 
-To run the code, simply go to `main.py`. Look at the main function and choose what functions you want to run, `visualize_hull(n)` or `time_algorithm(n_values, i, decrement_i=True)`.
+To run the code, simply go to `main.py`. Look at the main function and choose what functions you want to run, `visualize_hull(n, dis_inc: Optional[bool])` or `time_algorithm(n_values, i, decrement_i=True)`.
 
 Uncommenting `time_algorithm(n_values, i, decrement_i=True)` will run the runtime tests to show we acheived the expected runtime and show the results in the console and plot a runtime graph. 
 

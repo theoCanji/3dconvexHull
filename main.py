@@ -39,7 +39,7 @@ def time_algorithm(n_values, i, decrement_i = True):
     plt.savefig('runtime.png')
     plt.show()
 
-def visualize_hull(n: int):
+def visualize_hull(n: int, dis_inc = False):
     """
     Show the hull for n points for demo
 
@@ -47,7 +47,7 @@ def visualize_hull(n: int):
         n (int): number of points to generate and show
     """
     points = helpers.generate_random_points(n)
-    hull = RandomIncrementalHull3D(points)
+    hull = RandomIncrementalHull3D(points, dis_inc = dis_inc)
     hull.plot()
     print(helpers.is_convex(hull.get_hull())) ##verify correctness of the algorithm
 
@@ -57,10 +57,11 @@ def main():
     main function to demonstrate runtime and the algo for a smaller n
     """
     n_values = [16000, 24000, 32000, 48000, 64000, 96000, 128000, 192000, 256000]
+    display_incremental = False ## change this to True to see the incremental hull being built
     n = 100
     
     # time_algorithm(n_values, 10)
-    visualize_hull(n)
+    visualize_hull(n, display_incremental)
     
     
 if __name__ == '__main__':

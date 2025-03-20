@@ -4,12 +4,13 @@ from DCEL import DCEL, Vertex
 import random
 
 class RandomIncrementalHull3D:
-    def __init__(self, points):
+    def __init__(self, points, dis_inc = False):
         """
         Initializes the Random Incremental Hull object and creates the hull
 
         Args:
             points (3 dimensional tuples): A list of points that the user wants a hull made from
+            dis_inc (bool): A flag to display if you want to visualize the incremental hull as its being built
         """
         self.points = list(map(lambda x: Vertex(x), points))
         self.hull = DCEL()
@@ -19,10 +20,13 @@ class RandomIncrementalHull3D:
         self.hull.create_tetrahedron(self.points[0], self.points[1], self.points[2], self.points[3])
         self.needs_update = []
         self.new_faces = []
+        self.dis_inc = dis_inc
 
         self.get_conflicts(self.points[4:], self.hull.faces)
         
         for point in self.points[4:]: 
+            if self.dis_inc:
+                self.hull.plot()
             self.add_point(point)
             
     def get_hull(self):
@@ -147,4 +151,6 @@ class RandomIncrementalHull3D:
             if face in self.conflict_faces:
                 del self.conflict_faces[face]
             self.hull.remove_face(face)
+        if self.dis_inc:
+                self.hull.plot()
         return list(horizon_edges)
