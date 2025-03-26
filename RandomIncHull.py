@@ -25,6 +25,8 @@ class RandomIncrementalHull3D:
         self.new_faces = []
         self.dis_inc = dis_inc
         self.showing_horizon = False
+        self.current_point = None
+        self.current_horizon = None
 
         self.get_conflicts(self.points[4:], self.hull.faces)
 
@@ -46,8 +48,34 @@ class RandomIncrementalHull3D:
         self.ax = self.fig.add_subplot(111, projection='3d')
         self.hull.plot(ax=self.ax)
         self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
+        self.fig.canvas.mpl_connect('close_event', self.on_close)
         plt.title("Press Space to add next point")
         plt.show(block=True) 
+        
+    def on_close(self, event):
+        """
+        Handles the close event for the incremental plotting,
+        stops the incremental plotting mode
+        """
+        
+        self.dis_inc = False
+        plt.ioff()
+        if self.showing_horizon:
+            self.showing_horizon = False
+            for edge in self.current_horizon:
+                self.new_faces.append(self.hull.create_face([edge.start, edge.end, self.current_point]))
+
+            self.get_conflicts(self.needs_update, self.new_faces)
+                
+            self.needs_update = []
+            self.new_faces = []
+        
+        try:
+            while True:
+                self.current_point = next(self.remaining_points)
+                self.add_point(self.current_point)
+        except StopIteration:
+            pass
 
     def on_key_press(self, event):
         """
@@ -57,19 +85,19 @@ class RandomIncrementalHull3D:
         Args:
             event (KeyEvent): the matplotlib key press event
         """
-        print(event)
         if event.key == ' ' and not self.showing_horizon:
             try:
-                next_point = next(self.remaining_points)
-                self.add_point(next_point)
-                self.redraw()
+                self.current_point = next(self.remaining_points)
+                self.add_point(self.current_point)
+                if self.fig: ## might've closed in the add_point
+                    self.redraw()
             except StopIteration:
                 plt.close(self.fig)
 
     def redraw(self, highlight=None, title=None):
         """
         Helper function to redraw the hull with optional highlighting and title, 
-        used for the incremental plotting mode
+        used for the incremental plotting mode.
 
         Args:
             highlight (list[Egde], optional): The edges within the hull to highlight, show in red. Defaults to None.
@@ -146,11 +174,13 @@ class RandomIncrementalHull3D:
             self.showing_horizon = True ## lock on the space key
             self.redraw(highlight=horizon, title="Showing Horizon...")
             plt.pause(3) ## show horizon for 3 seconds
-            self.showing_horizon = False
-            
+            if self.showing_horizon: 
+                self.showing_horizon = False
+            else: ## resolved earlier when the plot was closed
+                return
+        
         for edge in horizon:
             self.new_faces.append(self.hull.create_face([edge.start, edge.end, point]))
-        
 
         self.get_conflicts(self.needs_update, self.new_faces)
             
@@ -212,4 +242,6 @@ class RandomIncrementalHull3D:
             if face in self.conflict_faces:
                 del self.conflict_faces[face]
             self.hull.remove_face(face)
-        return list(horizon_edges)
+            
+        self.current_horizon = list(horizon_edges)
+        return self.current_horizon 

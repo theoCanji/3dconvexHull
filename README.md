@@ -13,13 +13,41 @@
 
 **How to Run**
 
-To run the code, simply go to `main.py`. Look at the main function and choose what functions you want to run by commenting/uncommenting them, `visualize_hull(n, dis_inc: Optional[bool])` or `time_algorithm(n_values, i, decrement_i=True)`.
+1. Open `main.py`.
 
-Uncommenting `time_algorithm(n_values, i, decrement_i=True)` will run the runtime tests to show we acheived the expected runtime and show the results in the console and plot a runtime graph. 
+2. In the `main()` function, select what to run by commenting/uncommenting the following functions:
 
-After you close the graph, if `visualize_hull(n, dis_inc: Optional[bool])` is uncommented, it will show a plot of the convex hull in 3D in matplotlib. Setting dis_inc to True will show incremential construction, with each step generating after closing the window. After closing that plot for the final time, it will output to console the correctness of the convex hull and the runtime of the algorithm with a boolean indicating if the hull is truly convex. You can change the value of `n` defined in the main function to test different numbers of points, and you can change `display_incrementally` to `True` to see the hull being built incrementally.
+   - **Runtime Analysis:**
+     ```python
+     time_algorithm(n_values, i, decrement_i=True)
+     ```
+     - Runs runtime tests to confirm expected complexity.
+     - Displays runtime results in the console and plots a graph of runtimes.
 
-To create your own instance of the hull, simply import `from RandomIncHull import RandomIncrementalHull3D` and create a new `RandomIncrementalHull3D` with a set of three dimensional points, that object will now be plottable as it will hold the DCEL for the hull on instantiation.
+   - **Convex Hull Visualization:**
+     ```python
+     visualize_hull(n, dis_inc=False)
+     ```
+     - Shows a 3D plot of the convex hull using Matplotlib.
+     - Setting `dis_inc=True` enables incremental visualization:
+       - Press **space** to incrementally add points, pausing at each step to show removed faces and the horizon.
+       - Upon completion (adding all points or closing the plot), outputs to the console whether the hull is correctly convex with a boolean flag.
+
+3. Adjust parameters in `main()`:
+   - `n`: Number of points to generate and visualize.
+   - `display_incrementally`: Set to `True` for step-by-step visualization in ``visualize_hull(n, dis_inc=False)``.
+
+**Using in Your Own Project:**
+
+You can use the convex hull in your own scripts as follows:
+
+```python
+from RandomIncHull import RandomIncrementalHull3D
+
+# make a set of 3D points to create the hull from
+points = [(x1, y1, z1), (x2, y2, z2), ...]
+hull = RandomIncrementalHull3D(points)
+```
 
 **Files**
 
@@ -124,6 +152,29 @@ The class for running the random incremental convex hull algorithm.
 
 - **`get_hull()`**  
   Retrieves the DCEL hull from the object.  
+
+- **`start()`**  
+  Starts the interactive incremental hull plotting.
+
+- **`on_close()`**  
+  Handles the close event for the incremental plotting,
+  continues the algorithm and finds the rest of the hull from the point that the user closed the window.
+
+- **`on_key_press(self, event)`**  
+  Handles the key press event for the incremental plotting,
+  adds the next point to the hull when the space key is pressed
+
+  Args:
+      event (KeyEvent): the matplotlib key press event
+
+- **`redraw(self, highlight=None, title=None)`**  
+  Helper function to redraw the hull with optional highlighting and title, 
+  used for the incremental plotting mode.
+
+  Args:
+      highlight (list[Egde], optional): The edges within the hull to highlight, show in red. Defaults to None.
+      title (String, optional): The title of the plot. Defaults to None.
+  """
 
 - **`plot()`**  
   Function to plot the hull from the object itself.
