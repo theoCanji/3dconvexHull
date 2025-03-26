@@ -50,7 +50,10 @@ def visualize_hull(n: int, dis_inc = False):
     """
     points = helpers.generate_random_points(n)
     hull = RandomIncrementalHull3D(points, dis_inc = dis_inc)
-    hull.plot()
+    if dis_inc:
+        hull.start() ##start the interactive mode
+    else:
+        hull.hull.plot() ##plot the FULL hull
     print(helpers.is_convex(hull.get_hull())) ##verify correctness of the algorithm
 
 
@@ -61,11 +64,11 @@ def main():
     close the window over and over to go step by step
     """
     n_values = [16000, 24000, 32000, 48000, 64000, 96000, 128000, 192000, 256000]
-    display_incremental = False ## change this to True to see the incremental hull being built
+    display_incremental = True ## change this to True to see the incremental hull being built
     n = 100
     
-    # time_algorithm(n_values, 10)
-    visualize_hull(n, display_incremental)
+    time_algorithm(n_values, 10, False)
+    # visualize_hull(n, display_incremental) ## visualize the hull for n points, either complete or step by step
     
     
 if __name__ == '__main__':

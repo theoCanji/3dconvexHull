@@ -174,15 +174,19 @@ class DCEL:
                 break
         return edges
 
-    def plot(self, normal_mode = False):
+    def plot(self, normal_mode = False, ax=None, highlight=None):
         """
         method to plot the DCEL in matplotlib
 
         Args:
             normal_mode (bool, optional): A boolean flag of whether or not to show the normals of the faces. Defaults to False.
         """
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        if highlight is not None:
+            highlight = set(highlight)
+            
+        if ax is None:
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
 
         ## Plot vertices
         for vertex in self.vertices:
@@ -193,7 +197,10 @@ class DCEL:
             x_vals = [edge.start.coordinates[0], edge.end.coordinates[0]]
             y_vals = [edge.start.coordinates[1], edge.end.coordinates[1]]
             z_vals = [edge.start.coordinates[2], edge.end.coordinates[2]]
-            ax.plot(x_vals, y_vals, z_vals, color='r')
+            if (highlight is not None and edge in highlight or highlight is not None and edge.twin in highlight):
+                ax.plot(x_vals, y_vals, z_vals, color='r', linewidth=1)
+            else:
+                ax.plot(x_vals, y_vals, z_vals, color='k', linewidth=1)
 
         for face in self.faces:
             verts = self.get_face_vertices(face)
@@ -217,7 +224,7 @@ class DCEL:
                 for i in range(len(verts)):
                     verts[i] = verts[i].coordinates
 
-            ax.add_collection3d(Poly3DCollection([verts], edgecolor='k', alpha=.5))
+            ax.add_collection3d(Poly3DCollection([verts], alpha=.5))
 
         ## Set labels and aspect ratio
         ax.set_xlabel('X')

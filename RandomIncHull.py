@@ -1,4 +1,7 @@
 from collections import deque
+import time
+
+from matplotlib import pyplot as plt
 import helpers
 from DCEL import DCEL, Vertex
 import random
@@ -21,13 +24,65 @@ class RandomIncrementalHull3D:
         self.needs_update = []
         self.new_faces = []
         self.dis_inc = dis_inc
+        self.showing_horizon = False
 
         self.get_conflicts(self.points[4:], self.hull.faces)
-        
-        for point in self.points[4:]: 
-            if self.dis_inc:
-                self.hull.plot()
-            self.add_point(point)
+
+        if dis_inc: # If we want to display the incremental hull, rely on .start being called for interactive mode to work
+            self.remaining_points = iter(self.points[4:])
+        else:
+            for point in self.points[4:]:
+                self.add_point(point)
+
+    def start(self):
+        """
+        Starts the interactive incremental plotting.
+        """
+        if not self.dis_inc:
+            return
+
+        plt.ion()
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(111, projection='3d')
+        self.hull.plot(ax=self.ax)
+        self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
+        plt.title("Press Space to add next point")
+        plt.show(block=True) 
+
+    def on_key_press(self, event):
+        """
+        Handles the key press event for the incremental plotting,
+        adds the next point to the hull when the space key is pressed
+
+        Args:
+            event (KeyEvent): the matplotlib key press event
+        """
+        print(event)
+        if event.key == ' ' and not self.showing_horizon:
+            try:
+                next_point = next(self.remaining_points)
+                self.add_point(next_point)
+                self.redraw()
+            except StopIteration:
+                plt.close(self.fig)
+
+    def redraw(self, highlight=None, title=None):
+        """
+        Helper function to redraw the hull with optional highlighting and title, 
+        used for the incremental plotting mode
+
+        Args:
+            highlight (list[Egde], optional): The edges within the hull to highlight, show in red. Defaults to None.
+            title (String, optional): The title of the plot. Defaults to None.
+        """
+        self.ax.clear()
+        if title:
+            self.ax.set_title(title)
+        else:
+            self.ax.set_title("Press Space to add next point")
+        self.hull.plot(ax=self.ax, highlight=highlight)
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
             
     def get_hull(self):
         """
@@ -68,7 +123,6 @@ class RandomIncrementalHull3D:
                 points.remove(point)
         for point in points:
             self.conflict_vertices[point] = None
-
                     
     def add_point(self, point):
         """
@@ -87,6 +141,13 @@ class RandomIncrementalHull3D:
         
         face = self.conflict_vertices[point]
         horizon = self.get_horizon(face, point)
+        
+        if self.dis_inc: ## show the hull after the horizon is removed
+            self.showing_horizon = True ## lock on the space key
+            self.redraw(highlight=horizon, title="Showing Horizon...")
+            plt.pause(3) ## show horizon for 3 seconds
+            self.showing_horizon = False
+            
         for edge in horizon:
             self.new_faces.append(self.hull.create_face([edge.start, edge.end, point]))
         
@@ -151,6 +212,4 @@ class RandomIncrementalHull3D:
             if face in self.conflict_faces:
                 del self.conflict_faces[face]
             self.hull.remove_face(face)
-        if self.dis_inc:
-                self.hull.plot()
         return list(horizon_edges)
